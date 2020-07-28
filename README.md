@@ -2,15 +2,15 @@
 
 ![GitHub version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=gh&type=6&v=1.0.0&x2=0)
 
-![Logo](/static/logo/logo.jpg)
+![Logo](static/logo/logo.jpg)
 
 This app makes it easy to identify colors of red, green, blue and yellow LEDs and is therefore ideal for color blind people. For the best possible detection, the blue circle should be just above the LED. The color will then be displayed as text.
 
 ## Screenshot
-![App image](/static/screenshots/01_small.jpg)
-![App image](/static/screenshots/01_small.jpg)
-![App image](/static/screenshots/01_small.jpg)
-![App image](/static/screenshots/01_small.jpg)
+![App image](static/screenshots/01_small.jpg)
+![App image](static/screenshots/02_small.jpg)
+![App image](static/screenshots/03_small.jpg)
+![App image](static/screenshots/04_small.jpg)
 
 ## Features
 * Easy identification of red, green, blue and yellow LEDs
