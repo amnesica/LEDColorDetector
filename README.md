@@ -1,5 +1,5 @@
 <p align="center">
-<img src="/static/logo/logo.jpg" height="150" title="LED Logo">
+<img src="/static/logo/logo.png" height="150" title="LED Logo">
 </p>
 
 <h1 align="center">LED Color Detector for Colorblind</h1>
@@ -9,10 +9,12 @@
 This app makes it easy to identify colors of red, green, blue and yellow LEDs and is therefore ideal for color blind people. For the best possible detection, the blue circle should be just above the LED. The color will then be displayed as text.
 
 ## Screenshots
-![App image](static/screenshots/01.jpg)
-![App image](static/screenshots/02.jpg)
-![App image](static/screenshots/03.jpg)
-![App image](static/screenshots/04.jpg)
+<div style="display:flex;">
+<img alt="App image" src="/static/screenshots/01.jpg" width="24%">
+<img alt="App image" src="/static/screenshots/02.jpg" width="24%">
+<img alt="App image" src="/static/screenshots/03.jpg" width="24%">
+<img alt="App image" src="/static/screenshots/04.jpg" width="24%">
+</div>
 
 ## Features
 * Easy identification of red, green, blue and yellow LEDs
