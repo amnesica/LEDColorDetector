@@ -2,7 +2,5 @@
 /.gradle/
 /app/build/
 /app/build/intermediates/javac/debug/classes/
-/.idea/caches/
-/.idea/libraries/
-/.idea/modules/
+/.idea
 /local.properties
