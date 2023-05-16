@@ -7,8 +7,6 @@ import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,18 +18,15 @@ import androidx.appcompat.app.AppCompatActivity;
 @SuppressWarnings("ALL")
 public class MainActivity extends AppCompatActivity {
 
+    //permissions stuff
+    protected static final String[] PERMS = {"android.permission.CAMERA"};
+    protected static final int PERMS_REQUEST_CODE = 200;
+
     private Camera camera;
     private CameraPreview preview;
-    private DrawCircle drawCircle;
-    private Display display;
-    private static TextView textView;
+    private TextView textView;
     private com.github.clans.fab.FloatingActionButton fab1Exit;
-
-    //permissions stuff
-    public static final String[] PERMS = {"android.permission.CAMERA"};
-    public static final int PERMS_REQUEST_CODE = 200;
-
-    private static Context context;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,18 +52,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupFloatingActionButtons() {
         //exit app button
-        fab1Exit.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //finish app
-                finish();
-            }
-        });
+        fab1Exit.setOnClickListener(view -> finish());
     }
 
     /**
      * Show color in textView as text and background color
      */
-    public static void showColorInTextView(int r, int g, int b) {
+    public void showColorInTextView(int r, int g, int b) {
         int color = Color.rgb(r, g, b);
 
         // set background
@@ -86,15 +76,15 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Get text color with contrast value for good brightness
      */
-    public static int getContrastColor(int r, int g, int b) {
-        double y = (299 * r + 587 * g + 114 * b) / 1000;
+    public int getContrastColor(int r, int g, int b) {
+        double y = (299 * r + 587 * g + 114 * b) / 1000.;
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
     /**
      * Get color as text string which shows the detected color
      */
-    private static String getColorAsTextOld(int r, int g, int b) {
+    private String getColorAsTextOld(int r, int g, int b) {
         if ((r == 255 && g == 255) || (g > 170 && r > g) || (g > r && r > 240)) {
             return context.getResources().getString(R.string.color_yellow);
         } else if (g > r && g > b) {
@@ -112,13 +102,7 @@ public class MainActivity extends AppCompatActivity {
      * Check if this device has a camera
      */
     private boolean checkifDeviceHasCamera(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     /**
@@ -152,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int[] grantResults) {
         if (requestCode == PERMS_REQUEST_CODE) {
             if (grantResults != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // close the app
@@ -176,19 +160,19 @@ public class MainActivity extends AppCompatActivity {
 
         if (camera != null) {
             // Create our Preview view and set it as the content of our activity.
-            preview = new CameraPreview(this, camera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            preview.addView(this.preview);
+            preview = new CameraPreview(this, camera, this);
+            FrameLayout previewView = (FrameLayout) findViewById(R.id.camera_preview);
+            previewView.addView(this.preview);
 
             // Draw circle on top of camera preview in center of screen
             int screenCenterX = this.getResources().getDisplayMetrics().widthPixels / 2;
             int screenCenterY = this.getResources().getDisplayMetrics().heightPixels / 2;
-            drawCircle = new DrawCircle(this, screenCenterX, screenCenterY);
+            DrawCircle drawCircle = new DrawCircle(this, screenCenterX, screenCenterY);
             addContentView(drawCircle, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         }
     }
 
-    public static Context getContext() {
+    public Context getContext() {
         return context;
     }
 
@@ -232,13 +216,10 @@ public class MainActivity extends AppCompatActivity {
         alertDialogBuilder = new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.title_closing_application_dialog))
                 .setMessage(getResources().getString(R.string.message_closing_application_dialog))
-                .setPositiveButton(R.string.positive_button_closing_application_dialog, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        //finish task (do not remove from recent apps list)
-                        finish();
-                    }
+                .setPositiveButton(R.string.positive_button_closing_application_dialog, (dialog, i) -> {
+                    dialog.dismiss();
+                    //finish task (do not remove from recent apps list)
+                    finish();
                 })
                 .setNegativeButton(R.string.negative_button_closing_application_dialog, null);
 
@@ -248,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
 
         //change button text colors when button is shown
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }
 }
