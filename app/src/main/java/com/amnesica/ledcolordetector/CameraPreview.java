@@ -8,31 +8,29 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * A basic Camera preview class which calculates the average color
  * value within the drawn circle of DrawCircle
  */
 @SuppressWarnings("ALL")
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback {
-    private SurfaceHolder surfaceHolder;
-    private Camera camera;
 
+    private static final String TAG = "CameraPreview";
     // screen orientation in degrees for a vertical camera orientation
-    private final int SCREEN_ORIENTATION_VERTICAL = 90;
-
+    private static final int SCREEN_ORIENTATION_VERTICAL = 90;
+    // the size of the pointer (in pixels)
+    private static final int POINTER_RADIUS = 100;
+    private SurfaceHolder surfaceHolder;
+    private MainActivity activity;
+    private Camera camera;
     // size of the camera preview
     private Camera.Size previewSize;
-
     // array of 3 integers representing the color being selected in rgb
     private int[] selectedColor;
 
-    // the size of the pointer (in pixels)
-    private final int POINTER_RADIUS = 100;
-
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context, Camera camera, MainActivity activity) {
         super(context);
+        this.activity = activity;
         this.camera = camera;
 
         // Install a SurfaceHolder.Callback so we get notified when the
@@ -45,13 +43,29 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         selectedColor = new int[3];
     }
 
+    /**
+     * Clip input color value to valid rgb values
+     *
+     * @param color input value
+     * @return color value within [0-255]
+     */
+    private static int clipRgb(int color) {
+        if (color < 0) {
+            return 0;
+        } else if (color > 255) {
+            return 255;
+        } else {
+            return color;
+        }
+    }
+
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
         } catch (IOException | RuntimeException e) {
-            //Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
 
@@ -81,7 +95,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             camera.setDisplayOrientation(SCREEN_ORIENTATION_VERTICAL);
         } catch (RuntimeException e) {
-            //Log.d(TAG, "Error setting Orientation: " + e.getMessage());
+            Log.d(TAG, "Error setting Orientation: " + e.getMessage());
         }
 
 
@@ -94,7 +108,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             previewSize = camera.getParameters().getPreviewSize();
 
         } catch (Exception e) {
-            //Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
         }
     }
 
@@ -119,7 +133,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         //show color as text in textView
-        MainActivity.showColorInTextView(selectedColor[0], selectedColor[1], selectedColor[2]);
+        activity.showColorInTextView(selectedColor[0], selectedColor[1], selectedColor[2]);
     }
 
     /**
@@ -144,19 +158,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         final int xby2 = x / 2;
         final int yby2 = y / 2;
 
-        final float V = (float) (data[size + 2 * xby2 + yby2 * width] & 0xff) - 128.0f;
-        final float U = (float) (data[size + 2 * xby2 + 1 + yby2 * width] & 0xff) - 128.0f;
+        final float V = (data[size + 2 * xby2 + yby2 * width] & 0xff) - 128.0f;
+        final float U = (data[size + 2 * xby2 + 1 + yby2 * width] & 0xff) - 128.0f;
 
         // do the YUV -> RGB conversion
-        float Yf = 1.164f * ((float) Y) - 16.0f;
-        int red = (int) (Yf + 1.596f * V);
-        int green = (int) (Yf - 0.813f * V - 0.391f * U);
-        int blue = (int) (Yf + 2.018f * U);
+        float yf = 1.164f * (Y) - 16.0f;
+        int red = (int) (yf + 1.596f * V);
+        int green = (int) (yf - 0.813f * V - 0.391f * U);
+        int blue = (int) (yf + 2.018f * U);
 
         // clip rgb values to [0-255]
-        red = red < 0 ? 0 : red > 255 ? 255 : red;
-        green = green < 0 ? 0 : green > 255 ? 255 : green;
-        blue = blue < 0 ? 0 : blue > 255 ? 255 : blue;
+        red = clipRgb(red);
+        green = clipRgb(green);
+        blue = clipRgb(blue);
 
         // calculate average values
         averageColor[0] += (red - averageColor[0]) / count;

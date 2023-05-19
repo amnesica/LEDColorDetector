@@ -12,9 +12,9 @@ import android.view.View;
  */
 @SuppressLint("ViewConstructor")
 class DrawCircle extends View {
+    private static final int RADIUS = 100;
     private int screenCenterX;
     private int screenCenterY;
-    private final int radius = 100;
     private Paint p;
 
     public DrawCircle(Context context, int screenCenterX, int screenCenterY) {
@@ -32,7 +32,7 @@ class DrawCircle extends View {
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(20f);
 
-        canvas.drawCircle(screenCenterX, screenCenterY, radius, p);
+        canvas.drawCircle(screenCenterX, screenCenterY, RADIUS, p);
         invalidate();
         super.onDraw(canvas);
     }
@@ -54,7 +54,7 @@ class DrawCircle extends View {
     }
 
     public int getRadius() {
-        return radius;
+        return RADIUS;
     }
 
     public Paint getP() {
