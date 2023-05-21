@@ -4,7 +4,7 @@
 
 <h1 align="center">LED Color Detector for Colorblind</h1>
 
-![GitHub version](https://img.shields.io/badge/version-v1.0.1-brightgreen)
+![GitHub version](https://img.shields.io/badge/version-v1.0.2-brightgreen)
 
 This app makes it easy to identify colors of red, green, blue and yellow LEDs and is therefore ideal for color blind people. For the best possible detection, the blue circle should be just above the LED. The color will then be displayed as text.
 
